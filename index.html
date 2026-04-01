@@ -56,7 +56,10 @@ async function generate(){
       return;
     }
 
-    const raw = data?.output?.[0]?.content?.[0]?.text || "Sin respuesta";
+    const raw =
+  data?.output?.[0]?.content?.[0]?.text ||
+  data?.output_text ||
+  JSON.stringify(data, null, 2);;
 
     document.getElementById('out').innerHTML =
       `<div class="block">${raw}</div>`;
