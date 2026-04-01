@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Aplicación — Paco Alvarez</title>
+<style>
+body{font-family:system-ui;background:#0d0d0f;color:#e8e6f0;padding:24px}
+.app{max-width:800px;margin:auto}
+textarea,input{width:100%;margin-bottom:10px;padding:8px}
+button{padding:10px;background:#5741D9;color:#fff;border:none}
+.block{background:#1c1c22;padding:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="app">
+<h2>Sistema de aplicación</h2>
+
+<input id="co" placeholder="Empresa">
+<input id="role" placeholder="Rol">
+<textarea id="jd" placeholder="Pega JD completo"></textarea>
+
+<button onclick="generate()">Generar</button>
+
+<div id="out"></div>
+</div>
+
+<script>
+const SYS = "Responde SOLO en JSON válido";
+
+async function generate(){
+  const jd=document.getElementById('jd').value;
+  const co=document.getElementById('co').value;
+  const role=document.getElementById('role').value;
+
+  const res=await fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system:SYS,
+      prompt:`Empresa: ${co}\nRol: ${role}\nJD:\n${jd}`
+    })
+  });
+
+  const data=await res.json();
+  const raw=data.output[0].content[0].text;
+
+  document.getElementById('out').innerHTML=
+    `<div class="block">${raw}</div>`;
+}
+</script>
+</body>
+</html>
