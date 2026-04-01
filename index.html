@@ -29,24 +29,42 @@ button{padding:10px;background:#5741D9;color:#fff;border:none}
 const SYS = "Responde SOLO en JSON válido";
 
 async function generate(){
-  const jd=document.getElementById('jd').value;
-  const co=document.getElementById('co').value;
-  const role=document.getElementById('role').value;
+  try {
+    const jd=document.getElementById('jd').value;
+    const co=document.getElementById('co').value;
+    const role=document.getElementById('role').value;
 
-  const res=await fetch('/api/generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      system:SYS,
-      prompt:`Empresa: ${co}\nRol: ${role}\nJD:\n${jd}`
-    })
-  });
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:"Responde en JSON",
+        prompt:`Empresa: ${co}\nRol: ${role}\nJD:\n${jd}`
+      })
+    });
 
-  const data=await res.json();
-  const raw=data.output[0].content[0].text;
+    const text = await res.text();
 
-  document.getElementById('out').innerHTML=
-    `<div class="block">${raw}</div>`;
+    console.log("RAW RESPONSE:", text);
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      document.getElementById('out').innerHTML =
+        `<div class="block">Error backend: ${text}</div>`;
+      return;
+    }
+
+    const raw = data?.output?.[0]?.content?.[0]?.text || "Sin respuesta";
+
+    document.getElementById('out').innerHTML =
+      `<div class="block">${raw}</div>`;
+
+  } catch(e){
+    document.getElementById('out').innerHTML =
+      `<div class="block">Error: ${e.message}</div>`;
+  }
 }
 </script>
 </body>

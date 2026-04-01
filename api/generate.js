@@ -21,14 +21,8 @@ export default async function handler(req, res) {
       })
     });
 
-    const text = await response.text();
-
-    try {
-      const data = JSON.parse(text);
-      return res.status(200).json(data);
-    } catch {
-      return res.status(500).json({ error: text });
-    }
+    const data = await response.json();
+    return res.status(200).json(data);
 
   } catch (e) {
     return res.status(500).json({ error: e.message });
